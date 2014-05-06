@@ -85,6 +85,7 @@ class FunSetSuite extends FunSuite {
     val u123 = union(s1, u23)
     val u1234 = union(union(s1,s2), union(s3,s4))
     val u3456 = union(union(s3,s4), union(s5,s6))
+    val u123456 = union(u1234,u3456)
   }
 
   /**
@@ -153,6 +154,20 @@ class FunSetSuite extends FunSuite {
       assert(!contains(s, 4), "filter 4")
       assert(contains(s, 5), "filter 5")
       assert(contains(s, 6), "filter 6")
+    }
+  }
+
+  test("forAll for less than 7") {
+    new TestSets {
+      def f(elem: Int): Boolean = if (elem < 7) true else false
+      assert(forall(u123456, f))
+    }
+  }
+
+  test("forAll for less than 4") {
+    new TestSets {
+      def f(elem: Int): Boolean = if (elem < 5) true else false
+      assert(!forall(u123456, f))
     }
   }
 }
