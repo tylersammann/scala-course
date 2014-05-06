@@ -77,6 +77,14 @@ class FunSetSuite extends FunSuite {
     val s1 = singletonSet(1)
     val s2 = singletonSet(2)
     val s3 = singletonSet(3)
+    val s4 = singletonSet(4)
+    val s5 = singletonSet(5)
+    val s6 = singletonSet(6)
+    val u12 = union(s1, s2)
+    val u23 = union(s2, s3)
+    val u123 = union(s1, u23)
+    val u1234 = union(union(s1,s2), union(s3,s4))
+    val u3456 = union(union(s3,s4), union(s5,s6))
   }
 
   /**
@@ -86,7 +94,7 @@ class FunSetSuite extends FunSuite {
    * Once you finish your implementation of "singletonSet", exchange the
    * function "ignore" by "test".
    */
-  ignore("singletonSet(1) contains 1") {
+  test("singletonSet(1) contains 1") {
     
     /**
      * We create a new instance of the "TestSets" trait, this gives us access
@@ -101,12 +109,50 @@ class FunSetSuite extends FunSuite {
     }
   }
 
-  ignore("union contains all elements") {
+  test("singletonSet(1) not contains 2") {
+    new TestSets {
+      assert(!contains(s1, 2), "Singleton")
+    }
+  }
+
+  test("union contains all elements") {
     new TestSets {
       val s = union(s1, s2)
       assert(contains(s, 1), "Union 1")
       assert(contains(s, 2), "Union 2")
       assert(!contains(s, 3), "Union 3")
+    }
+  }
+
+  test("intersection contains 2") {
+    new TestSets {
+      val s = intersect(u12, u23)
+      assert(!contains(s, 1), "intersect 1")
+      assert(contains(s, 2), "intersect 2")
+      assert(!contains(s, 3), "intersect 3")
+    }
+  }
+
+  test("diff contains 1,2 - not 3,4,5,6") {
+    new TestSets {
+      val s = diff(u1234, u3456)
+      assert(contains(s, 1), "diff 1")
+      assert(contains(s, 2), "diff 2")
+      assert(!contains(s, 3), "diff 3")
+      assert(!contains(s, 4), "diff 4")
+      assert(!contains(s, 5), "diff 5")
+      assert(!contains(s, 6), "diff 6")
+    }
+  }
+
+  test("filter for greater than 4") {
+    new TestSets {
+      def f(elem: Int): Boolean = if (elem > 4) true else false
+      val s = filter(u3456, f)
+      assert(!contains(s, 3), "filter 3")
+      assert(!contains(s, 4), "filter 4")
+      assert(contains(s, 5), "filter 5")
+      assert(contains(s, 6), "filter 6")
     }
   }
 }
