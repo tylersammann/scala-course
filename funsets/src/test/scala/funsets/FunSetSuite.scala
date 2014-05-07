@@ -80,12 +80,15 @@ class FunSetSuite extends FunSuite {
     val s4 = singletonSet(4)
     val s5 = singletonSet(5)
     val s6 = singletonSet(6)
+    val s7 = singletonSet(7)
+    val s1000 = singletonSet(1000)
     val u12 = union(s1, s2)
     val u23 = union(s2, s3)
     val u123 = union(s1, u23)
     val u1234 = union(union(s1,s2), union(s3,s4))
     val u3456 = union(union(s3,s4), union(s5,s6))
     val u123456 = union(u1234,u3456)
+    val u1357thou = union(union(union(s1,s3),union(s5,s7)),s1000)
   }
 
   /**
@@ -154,6 +157,20 @@ class FunSetSuite extends FunSuite {
       assert(!contains(s, 4), "filter 4")
       assert(contains(s, 5), "filter 5")
       assert(contains(s, 6), "filter 6")
+    }
+  }
+
+  test("filter for less than 5") {
+    new TestSets {
+      val s = filter(u1357thou, (elem: Int) => elem < 5)
+      assert(!contains(s, -1000), "filter -1000")
+      assert(!contains(s, -500), "filter -500")
+      assert(!contains(s, -1), "filter -1")
+      assert(contains(s, 1), "filter 1")
+      assert(contains(s, 3), "filter 3")
+      assert(!contains(s, 5), "filter 5")
+      assert(!contains(s, 7), "filter 7")
+      assert(!contains(s, 1000), "filter 1000")
     }
   }
 
