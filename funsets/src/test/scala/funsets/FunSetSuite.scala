@@ -164,10 +164,57 @@ class FunSetSuite extends FunSuite {
     }
   }
 
-  test("forAll for less than 4") {
+  test("forAll for less than 5") {
     new TestSets {
       def f(elem: Int): Boolean = if (elem < 5) true else false
       assert(!forall(u123456, f))
+    }
+  }
+
+  test("exists for less than 4") {
+    new TestSets {
+      def f(elem: Int): Boolean = if (elem < 4) true else false
+      assert(exists(u123456, f))
+    }
+  }
+
+  test("not exists for less than 1") {
+    new TestSets {
+      def f(elem: Int): Boolean = if (elem < 1) true else false
+      assert(!exists(u123456, f))
+    }
+  }
+
+  test("exists for less than 2") {
+    new TestSets {
+      def f(elem: Int): Boolean = if (elem < 2) true else false
+      assert(exists(u123456, f))
+    }
+  }
+
+  test("map + 12") {
+    new TestSets {
+      def f(elem: Int): Int = elem + 12
+      val mapped = map(u123, f);
+      assert(contains(mapped, 13));
+      assert(contains(mapped, 14));
+      assert(contains(mapped, 15));
+      assert(!contains(mapped, 1));
+      assert(!contains(mapped, 2));
+      assert(!contains(mapped, 3));
+    }
+  }
+
+  test("map * 12") {
+    new TestSets {
+      def f(elem: Int): Int = elem * 4
+      val mapped = map(u123, f);
+      assert(contains(mapped, 4));
+      assert(contains(mapped, 8));
+      assert(contains(mapped, 12));
+      assert(!contains(mapped, 1));
+      assert(!contains(mapped, 2));
+      assert(!contains(mapped, 3));
     }
   }
 }
