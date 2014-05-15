@@ -78,7 +78,18 @@ abstract class TweetSet {
    * Question: Should we implment this method here, or should it remain abstract
    * and be implemented in the subclasses?
    */
-  def descendingByRetweet: TweetList = ???
+  def reverseTweetList(tl: TweetList): TweetList = {
+    def reverseLoop(l1: TweetList, l2: TweetList): TweetList =
+      if (l1.isEmpty) l2
+      else reverseLoop(l1.tail, new Cons(l1.head, l2))
+    reverseLoop(tl, Nil)
+  }
+
+  def getDescendingList(ts:TweetSet, tl: TweetList): TweetList =
+    if (ts.isInstanceOf[Empty]) reverseTweetList(tl)
+    else getDescendingList(ts.remove(ts.mostRetweeted), new Cons(ts.mostRetweeted, tl))
+
+  def descendingByRetweet: TweetList = getDescendingList(this, Nil)
 
 
   /**
