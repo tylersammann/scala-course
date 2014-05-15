@@ -78,15 +78,9 @@ abstract class TweetSet {
    * Question: Should we implment this method here, or should it remain abstract
    * and be implemented in the subclasses?
    */
-  def reverseTweetList(tl: TweetList): TweetList = {
-    def reverseLoop(l1: TweetList, l2: TweetList): TweetList =
-      if (l1.isEmpty) l2
-      else reverseLoop(l1.tail, new Cons(l1.head, l2))
-    reverseLoop(tl, Nil)
-  }
 
   def getDescendingList(ts:TweetSet, tl: TweetList): TweetList =
-    if (ts.isInstanceOf[Empty]) reverseTweetList(tl)
+    if (ts.isInstanceOf[Empty]) tl.reverse
     else getDescendingList(ts.remove(ts.mostRetweeted), new Cons(ts.mostRetweeted, tl))
 
   def descendingByRetweet: TweetList = getDescendingList(this, Nil)
@@ -169,14 +163,23 @@ class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
     right.union(left.union(that.incl(elem)))
 
   def mostRetweeted: Tweet = {
-    val leftMost = if (left.isInstanceOf[NonEmpty]) left.mostRetweeted.retweets else 0
-    val rightMost = if (right.isInstanceOf[NonEmpty]) right.mostRetweeted.retweets else 0
-    if (elem.retweets >= leftMost && elem.retweets >= rightMost)
+    if (left.isInstanceOf[Empty] && right.isInstanceOf[Empty]) {
       elem
-    else if (leftMost >= rightMost)
-      left.mostRetweeted
-    else
-      right.mostRetweeted
+    }
+    else if (left.isInstanceOf[Empty]) {
+      val rightMost = right.mostRetweeted
+      if (elem.retweets > rightMost.retweets) elem else rightMost
+    }
+    else if (right.isInstanceOf[Empty]) {
+      val leftMost = left.mostRetweeted
+      if (elem.retweets > leftMost.retweets) elem else leftMost
+    }
+    else {
+      val rightMost = right.mostRetweeted
+      val leftMost = left.mostRetweeted
+      val most = if (rightMost.retweets > leftMost.retweets) rightMost else leftMost
+      if (elem.retweets > most.retweets) elem else most
+    }
   }
 
   /**
@@ -223,6 +226,13 @@ class NonEmpty(elem: Tweet, left: TweetSet, right: TweetSet) extends TweetSet {
 }
 
 trait TweetList {
+  def reverse: TweetList = {
+    def reverseLoop(l1: TweetList, l2: TweetList): TweetList =
+      if (l1.isEmpty) l2
+      else reverseLoop(l1.tail, new Cons(l1.head, l2))
+    reverseLoop(this, Nil)
+  }
+
   def head: Tweet
   def tail: TweetList
   def isEmpty: Boolean
@@ -248,17 +258,29 @@ object GoogleVsApple {
   val google = List("android", "Android", "galaxy", "Galaxy", "nexus", "Nexus")
   val apple = List("ios", "iOS", "iphone", "iPhone", "ipad", "iPad")
 
-  lazy val googleTweets: TweetSet = ???
-  lazy val appleTweets: TweetSet = ???
+  def isInList(t: Tweet, l: List[String]): Boolean =
+    if (l.isEmpty) false
+    else if (t.text.contains(l.head)) true
+    else isInList(t, l.tail)
+
+  lazy val googleTweets: TweetSet =
+    TweetReader.allTweets.filter(t => isInList(t, google))
+
+  lazy val appleTweets: TweetSet =
+    TweetReader.allTweets.filter(t => isInList(t, apple))
+
 
   /**
    * A list of all tweets mentioning a keyword from either apple or google,
    * sorted by the number of retweets.
    */
-  lazy val trending: TweetList = ???
+  lazy val trending: TweetList = googleTweets.union(appleTweets).descendingByRetweet
 }
 
 object Main extends App {
   // Print the trending tweets
   GoogleVsApple.trending foreach println
+//  GoogleVsApple.googleTweets.union(GoogleVsApple.appleTweets) foreach println
+//  GoogleVsApple.appleTweets foreach println
+
 }
