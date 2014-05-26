@@ -69,6 +69,16 @@ class HuffmanSuite extends FunSuite {
     assert(ret(2).char == 'b' || ret(2).char == 'a')
   }
 
+  // test singleton()
+  test("singleton") {
+    val bad = List[CodeTree]()
+    val good = List(Leaf('a',1))
+    val bad2 = List(Leaf('a',1), Leaf('b',1))
+    assert(singleton(bad) === false)
+    assert(singleton(bad2) === false)
+    assert(singleton(good) === true)
+  }
+
 
 
   //pre made ================================================================================================
