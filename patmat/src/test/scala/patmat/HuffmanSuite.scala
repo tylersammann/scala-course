@@ -101,9 +101,27 @@ class HuffmanSuite extends FunSuite {
     assert(singleton(until(singleton,combine)(leaflist)) === true)
   }
 
+  test("find secret code") {
+    println(decodedSecret)
+  }
+
+  test("encode secret") {
+    assert(secret === encode(frenchCode)(string2Chars("huffmanestcool")))
+  }
+
   test("decode and encode a very short text should be identity") {
     new TestTrees {
       assert(decode(t1, encode(t1)("ab".toList)) === "ab".toList)
     }
+  }
+
+  test("decode and quickencode a very short text should be identity") {
+    new TestTrees {
+      assert(decode(t1, quickEncode(t1)("ab".toList)) === "ab".toList)
+    }
+  }
+
+  test("quickEncode secret") {
+    assert(secret === quickEncode(frenchCode)(string2Chars("huffmanestcool")))
   }
 }
