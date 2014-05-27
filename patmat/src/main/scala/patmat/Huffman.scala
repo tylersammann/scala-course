@@ -124,6 +124,7 @@ object Huffman {
    */
   def singleton(trees: List[CodeTree]): Boolean = trees.length == 1
 
+
   /**
    * The parameter `trees` of this function is a list of code trees ordered
    * by ascending weights.
@@ -136,7 +137,26 @@ object Huffman {
    * If `trees` is a list of less than two elements, that list should be returned
    * unchanged.
    */
-  def combine(trees: List[CodeTree]): List[CodeTree] = ???
+  def combine(trees: List[CodeTree]): List[CodeTree] = {
+    if (trees.size < 2) {
+      trees
+    } else {
+      def getNewForkIndex(trees: List[CodeTree], newForkWeight: Int, ind: Int): Int = {
+        if (trees.isEmpty || weight(trees.head) >= newForkWeight)
+          ind
+        else
+          getNewForkIndex(trees.tail, newForkWeight, ind + 1)
+      }
+      val newFork = makeCodeTree(trees(0), trees(1))
+      val newTrees = trees.drop(2)
+      val newForkInd = getNewForkIndex(newTrees, newFork.weight, 0)
+      newTrees.take(newForkInd-1) ++ List(newFork) ++ newTrees.drop(newForkInd)
+    }
+  }
+
+//  abstract class CodeTree
+//  case class Fork(left: CodeTree, right: CodeTree, chars: List[Char], weight: Int) extends CodeTree
+//  case class Leaf(char: Char, weight: Int) extends CodeTree
 
   /**
    * This function will be called in the following way:
@@ -155,7 +175,13 @@ object Huffman {
    *    the example invocation. Also define the return type of the `until` function.
    *  - try to find sensible parameter names for `xxx`, `yyy` and `zzz`.
    */
-  def until(xxx: ???, yyy: ???)(zzz: ???): ??? = ???
+  def until(singletonFunc: List[CodeTree] => Boolean, combineFunc: List[CodeTree] => List[CodeTree])(trees: List[CodeTree]): List[CodeTree] = {
+    def untilLoop(trees: List[CodeTree]): List[CodeTree] = {
+      if (singletonFunc(trees)) trees
+      else untilLoop(combineFunc(trees))
+    }
+    untilLoop(trees)
+  }
 
   /**
    * This function creates a code tree which is optimal to encode the text `chars`.
@@ -163,7 +189,11 @@ object Huffman {
    * The parameter `chars` is an arbitrary text. This function extracts the character
    * frequencies from that text and creates a code tree based on them.
    */
-  def createCodeTree(chars: List[Char]): CodeTree = ???
+  def createCodeTree(chars: List[Char]): CodeTree = {
+    val leafList = makeOrderedLeafList(times(chars))
+    val oneCodeTree = until(singleton, combine)(leafList)
+    oneCodeTree.head
+  }
 
 
 
