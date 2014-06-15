@@ -116,9 +116,13 @@ object Anagrams {
    *  and has no zero-entries.
    */
   def subtract(x: Occurrences, y: Occurrences): Occurrences = {
-    for {
+    {for {
       xs <- x
-    } yield (xs._1, xs._2 - y.toMap.get(xs._1).get)
+    } yield {
+      val toSub = y.toMap.getOrElse(xs._1, 0)
+      if (xs._2 - toSub > 0) (xs._1, xs._2 - toSub)
+      else ('z', 0)
+    }}.filterNot((e: (Char, Int)) => (e._2 <= 0) )
   }
 
   /** Returns a list of all anagram sentences of the given sentence.
@@ -161,6 +165,22 @@ object Anagrams {
    *
    *  Note: There is only one anagram of an empty sentence.
    */
-  def sentenceAnagrams(sentence: Sentence): List[Sentence] = ???
+  def sentenceAnagrams(sentence: Sentence): List[Sentence] = sentence match {
+    case Nil => Nil
+    case s => {
+      def sOcc = sentenceOccurrences(s)
+      for {
+        occ <- combinations(sOcc)
+      } yield {
+        val smallerAnagrams = sentenceAnagrams(List(occurencesMkStr(subtract(sOcc, occ))))
+        if (!smallerAnagrams.isEmpty) {
+          val currSet: List[Word] = (wordAnagrams(occurencesMkStr(occ)))
+          List(currSet) ++ smallerAnagrams
+        } else {
+          smallerAnagrams
+        }
+      }.flatten
+    }
+  }
 
 }

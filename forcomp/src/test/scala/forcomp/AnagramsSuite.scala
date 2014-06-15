@@ -74,7 +74,7 @@ class AnagramsSuite extends FunSuite {
   test("occurences subtract") {
     def occ = wordOccurrences("asdffff")
     def occy = wordOccurrences("asdf")
-    assert(subtract(occ, occy) === List(('a',0), ('d',0), ('f',3), ('s',0)))
+    assert(subtract(occ, occy) === List(('f',3)))
   }
 
 

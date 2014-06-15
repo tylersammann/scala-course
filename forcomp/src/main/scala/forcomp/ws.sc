@@ -1,24 +1,19 @@
 import forcomp.Anagrams
+import forcomp.Anagrams.Sentence
 def l4 = List(('a', 2), ('b', 2))
+def l7 = List(('a', 1), ('b', 2))
 l4
 def l5 = "aabb"
 l5.combinations(4)
 l5.combinations(3)
 
-{ for {
-  i <- l4
-} yield "".padTo(i._2, i._1) }.mkString
-
-{ for {
-  n <- 0 to l5.length()
-  l <- l5.combinations(n).toList
-} yield Anagrams.wordOccurrences(l)
-}.toList
-
-def occ = Anagrams.wordOccurrences("asdffff")
-def occy = Anagrams.wordOccurrences("asdf")
 
 
-  for {
-    xs <- occ
-  } yield (xs._1, xs._2 - occy.toMap.get(xs._1).get)
+{for {
+  xs <- l4
+} yield {
+  val toSub = l7.toMap.getOrElse(xs._1, -1)
+  if (toSub == -1) xs
+  if (xs._2 - toSub > 0) (xs._1, xs._2 - toSub)
+  else ('z', -1)
+}}.filterNot((e: (Char, Int)) => (e._2 <= 0) )
