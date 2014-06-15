@@ -71,6 +71,11 @@ class AnagramsSuite extends FunSuite {
     assert(combinations(abba).toSet === abbacomb.toSet)
   }
 
+  test("occurences subtract") {
+    def occ = wordOccurrences("asdffff")
+    def occy = wordOccurrences("asdf")
+    assert(subtract(occ, occy) === List(('a',0), ('d',0), ('f',3), ('s',0)))
+  }
 
 
   test("sentence anagrams: []") {

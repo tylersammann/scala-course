@@ -15,3 +15,10 @@ l5.combinations(3)
 } yield Anagrams.wordOccurrences(l)
 }.toList
 
+def occ = Anagrams.wordOccurrences("asdffff")
+def occy = Anagrams.wordOccurrences("asdf")
+
+
+  for {
+    xs <- occ
+  } yield (xs._1, xs._2 - occy.toMap.get(xs._1).get)
