@@ -165,22 +165,22 @@ object Anagrams {
    *
    *  Note: There is only one anagram of an empty sentence.
    */
+
   def sentenceAnagrams(sentence: Sentence): List[Sentence] = sentence match {
-    case Nil => Nil
-    case s => {
-      def sOcc = sentenceOccurrences(s)
-      for {
-        occ <- combinations(sOcc)
-      } yield {
-        val smallerAnagrams = sentenceAnagrams(List(occurencesMkStr(subtract(sOcc, occ))))
-        if (!smallerAnagrams.isEmpty) {
-          val currSet: List[Word] = (wordAnagrams(occurencesMkStr(occ)))
-          List(currSet) ++ smallerAnagrams
-        } else {
-          smallerAnagrams
-        }
-      }.flatten
-    }
+    case Nil => List(Nil)
+    case List() => List(Nil)
+    case s =>
+      {
+        List(wordAnagrams(occurencesMkStr(sentenceOccurrences(s))))
+//        def sOcc = sentenceOccurrences(s)
+//        for {
+//          occ <- combinations(sOcc).filterNot((e: Occurrences) => e == Nil || e == List())
+//          currSentence <- sentenceAnagrams(List(occurencesMkStr(subtract(sOcc, occ))))
+//          currWord <- wordAnagrams(occurencesMkStr(occ)).filter((e: Word) => e.length() == occurencesMkStr(occ).length())
+//        } yield {
+//          currWord :: currSentence
+//        }
+      }
   }
 
 }
