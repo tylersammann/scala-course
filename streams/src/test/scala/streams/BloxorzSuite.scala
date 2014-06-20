@@ -38,6 +38,10 @@ class BloxorzSuite extends FunSuite {
       |------ooo-""".stripMargin
 
     val optsolution = List(Right, Right, Down, Right, Right, Right, Down)
+
+    val standBlock = new Block(Pos(1,2), Pos(1,2))
+    val flatBlock = new Block(Pos(1,2), Pos(2,2))
+    val outBlock = new Block(Pos(3,0), Pos(3,0))
   }
 
   test("terrain function level 1") {
@@ -50,6 +54,21 @@ class BloxorzSuite extends FunSuite {
   test("findChar level 1") {
     new Level1 {
       assert(startPos == Pos(1,1))
+    }
+  }
+
+  test("isStanding") {
+    new Level1 {
+      assert(standBlock.isStanding)
+      assert(!flatBlock.isStanding)
+    }
+  }
+
+  test("isLegal") {
+    new Level1 {
+      assert(standBlock.isLegal)
+      assert(flatBlock.isLegal)
+      assert(!outBlock.isLegal)
     }
   }
 
