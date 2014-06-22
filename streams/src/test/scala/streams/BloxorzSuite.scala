@@ -42,6 +42,8 @@ class BloxorzSuite extends FunSuite {
     val standBlock = new Block(Pos(1,2), Pos(1,2))
     val flatBlock = new Block(Pos(1,2), Pos(2,2))
     val outBlock = new Block(Pos(3,0), Pos(3,0))
+    val block11 = new Block(Pos(1,1),Pos(1,1))
+    val historyLU = List(Left,Up)
   }
 
   test("terrain function level 1") {
@@ -69,6 +71,17 @@ class BloxorzSuite extends FunSuite {
       assert(standBlock.isLegal)
       assert(flatBlock.isLegal)
       assert(!outBlock.isLegal)
+    }
+  }
+
+  test("neighborsWithHistory") {
+    new Level1 {
+      assert(neighborsWithHistory(block11, historyLU).toSet ===
+        Set(
+          (Block(Pos(1,2),Pos(1,3)), List(Right,Left,Up)),
+          (Block(Pos(2,1),Pos(3,1)), List(Down,Left,Up))
+        )
+      )
     }
   }
 
