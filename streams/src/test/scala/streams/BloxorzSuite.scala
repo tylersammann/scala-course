@@ -26,22 +26,35 @@ class BloxorzSuite extends FunSuite {
     }
   }
 
-  trait Level1 extends SolutionChecker {
+  trait Level0 extends SolutionChecker {
       /* terrain for level 1*/
 
     val level =
-    """ooo-------
-      |oSoooo----
-      |ooooooooo-
-      |-ooooooooo
-      |-----ooToo
-      |------ooo-""".stripMargin
+      """------
+        |--ST--
+        |--oo--
+        |--oo--
+        |------""".stripMargin
+
+    val optsolution = List(Down, Right, Up)
+  }
+
+  trait Level1 extends SolutionChecker {
+    /* terrain for level 1*/
+    val level =
+      """ooo-------
+        |oSoooo----
+        |ooooooooo-
+        |-ooooooooo
+        |-----ooToo
+        |------ooo-""".stripMargin
 
     val optsolution = List(Right, Right, Down, Right, Right, Right, Down)
 
     val standBlock = new Block(Pos(1,2), Pos(1,2))
     val flatBlock = new Block(Pos(1,2), Pos(2,2))
     val outBlock = new Block(Pos(3,0), Pos(3,0))
+    val validOutBlock = new Block(Pos(3,1), Pos(4,1))
     val block11 = new Block(Pos(1,1),Pos(1,1))
     val historyLU = List(Left,Up)
   }
@@ -71,6 +84,7 @@ class BloxorzSuite extends FunSuite {
       assert(standBlock.isLegal)
       assert(flatBlock.isLegal)
       assert(!outBlock.isLegal)
+      assert(!validOutBlock.isLegal)
     }
   }
 
@@ -85,6 +99,24 @@ class BloxorzSuite extends FunSuite {
     }
   }
 
+  test("newNeighborsOnly") {
+    new Level1{
+      assert (
+        newNeighborsOnly(
+          Set(
+            (Block(Pos(1,2),Pos(1,3)), List(Right,Left,Up)),
+            (Block(Pos(2,1),Pos(3,1)), List(Down,Left,Up))
+          ).toStream,
+          Set(Block(Pos(1,2),Pos(1,3)), Block(Pos(1,1),Pos(1,1)))
+        ).toSet
+        ===
+        Set(
+          (Block(Pos(2,1),Pos(3,1)), List(Down,Left,Up))
+        )
+      )
+    }
+  }
+
   test("optimal solution for level 1") {
     new Level1 {
       assert(solve(solution) == Block(goal, goal))
@@ -93,6 +125,18 @@ class BloxorzSuite extends FunSuite {
 
   test("optimal solution length for level 1") {
     new Level1 {
+      assert(solution.length == optsolution.length)
+    }
+  }
+
+  test("optimal solution for level 0") {
+    new Level0 {
+      assert(solve(solution) == Block(goal, goal))
+    }
+  }
+
+  test("optimal solution length for level 0") {
+    new Level0 {
       assert(solution.length == optsolution.length)
     }
   }
